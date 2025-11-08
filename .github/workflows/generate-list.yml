@@ -1,0 +1,52 @@
+name: Generate docs list
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/generate-list.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find markdown files
+        id: find
+        run: |
+          mkdir -p docs
+          echo "[]"> docs/list.json || true
+          # list .md files in docs/ (non-recursive)
+          files=$(git ls-files docs/*.md || true)
+          python3 - <<'PY'
+            import json,sys,os
+            files = sys.stdin.read().strip().splitlines()
+            out = []
+          for f in files:
+            if not f.strip(): continue
+            title = os.path.splitext(os.path.basename(f))[0].replace('-', ' ').replace('_',' ').title()
+            out.append({"title": title, "path": f})
+            print(json.dumps(out, indent=2))
+            PY <<EOF
+            $files
+            EOF
+
+      # Write list into docs/list.json and commit if changed
+      - name: Write list.json and commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python3 - <<'PY'
+            import json,sys,subprocess,os
+            files = subprocess.check_output(["git","ls-files","docs/*.md"]).decode().strip().splitlines()
+            out = []
+          for f in files:
+            title = os.path.splitext(os.path.basename(f))[0].replace('-', ' ').replace('_',' ').title()
+            out.append({"title": title, "path": f})
+            open("docs/list.json","w").write(json.dumps(out, indent=2))
+            PY
+            git add docs/list.json || true
+            if ! git diff --cached --quiet; then
+          git commit -m "chore: update docs/list.json (auto)" || true
+            git push
+            else
+            echo "No changes"
+            fi

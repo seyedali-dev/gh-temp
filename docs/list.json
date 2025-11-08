@@ -1,0 +1,10 @@
+[
+  {
+    "title": "Welcome",
+    "path": "docs/sample.md"
+  },
+  {
+    "title": "How it works",
+    "path": "docs/how-it-works.md"
+  }
+]

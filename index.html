@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Simple Docs Viewer</title>
+        
+        <!-- marked (markdown parser) via CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        
+        <link rel="stylesheet" href="styles.css"/>
+    </head>
+    <body>
+        <div class="app-root">
+            <nav class="sidebar">
+                <h2>Docs</h2>
+                <ul id="doc-list">Loading…</ul>
+            </nav>
+            
+            <main class="main-area" id="content">
+                <div id="render-area">Select a document to view.</div>
+            </main>
+            
+            <aside class="toc-area" id="toc">
+                <h3>On this page</h3>
+                <div id="toc-list">No headings</div>
+            </aside>
+        </div>
+        
+        <script src="app.js" type="module"></script>
+    </body>
+</html>
